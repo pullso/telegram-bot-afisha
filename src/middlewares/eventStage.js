@@ -64,7 +64,7 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
   delete options.date
   const data = await getEvents(options)
 
-  if (data?.data?.values.length) {
+  if (data && data.data && data.data.values && data.data.values.length) {
     ctx.session.events = data.data.values
     await ctx.reply(`Всего мероприятий: ${ctx.session.events.length}`)
     await resWithEvents(ctx)

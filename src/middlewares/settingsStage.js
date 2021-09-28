@@ -39,7 +39,7 @@ const getMaxPrice = Telegraf.action(/max (.+)/, async (ctx) => {
   ctx.session.settings.price_max = ctx.match[1]
   await ctx.editMessageText('Сохранить настройки?', Markup.inlineKeyboard([
       Markup.button.callback('☑️ Да', 'save'),
-      Markup.button.callback('⬅️ Нет, перейти в Меню', 'menu')
+      Markup.button.callback('⬅️ Нет, перейти в Меню', 'menu', !Boolean(ctx.session.user.options.cities))
     ]
   ).resize())
   ctx.wizard.next()

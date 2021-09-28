@@ -10,7 +10,7 @@ export default async (ctx, next) => {
     if (!user) {
       await User.create({
         _id: new mongoose.Types.ObjectId(),
-        tgId: ctx.message.from.id,
+        tgId: ctx.from.id,
         options: {}
       })
     }

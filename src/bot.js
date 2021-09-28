@@ -30,15 +30,18 @@ export const menuKeyboard = Markup
 
 
 bot.start((ctx) =>
-  ctx.reply(`Привет, ${ctx.message.chat.first_name}.\nМеня зовут Павел)\nЯ создал этого бота, чтобы ты быстрее находил интересные ивенты\nЕсли будут идеи по улучшению бота - пиши @pullso`, menuKeyboard))
+  ctx.reply(`Привет, ${ctx.message.chat.first_name}.\nМеня зовут Павел)\nЯ создал этого бота, чтобы ты быстрее находил интересные ивенты\nЕсли будут идеи по улучшению бота - пиши @pullso`, Markup
+    .inlineKeyboard([
+      Markup.button.callback('⚙ Настроить поиск', 'settings')
+
+      // ['🔍 Поиск мероприятий', '😎 Подписка'],
+      // ['⚙ ️Настройки', '📞 Обратная связь'],
+      // ['👥 Поделиться ботом']
+    ])
+    .oneTime()
+    .resize()))
 
 const stage = new Scenes.Stage([settingsStage, eventStage])
-
-
-// bot.on('callback_query', async (ctx, next) => {
-//   await ctx.reply('cxt' + ctx.callbackQuery.data)
-//   return next()
-// })
 
 bot.use(
   // Telegraf.log(),
