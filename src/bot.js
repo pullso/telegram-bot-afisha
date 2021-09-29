@@ -9,10 +9,6 @@ import userMiddleware from "./middlewares/user.js";
 dotenv.config()
 moment.locale('ru')
 
-if (process.env.BOT_TOKEN === undefined) {
-  throw new TypeError('not working telegram token')
-}
-
 export const bot = new Telegraf(process.env.BOT_TOKEN)
 
 export const menuKeyboard = Markup
@@ -43,7 +39,7 @@ bot.start((ctx) =>
 const stage = new Scenes.Stage([settingsStage, eventStage])
 
 bot.use(
-  // Telegraf.log(),
+  Telegraf.log(),
   session(),
   sessionMiddleware,
   userMiddleware,
