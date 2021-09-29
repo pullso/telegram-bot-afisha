@@ -11,11 +11,16 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 
 await connectDb().catch(error => console.error(error))
 
-bot.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`)
-bot.startWebhook(`/bot${BOT_TOKEN}`, null, PORT)
+if (process.env.NODE_ENV === 'production') {
+  await bot.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`)
+  await bot.startWebhook(`/bot${BOT_TOKEN}`, null, PORT)
+  console.log(`bot started with webhook at ${new Date()}`)
+} else {
+  bot.launch()
+    .then(() =>
+      console.log(`bot started at ${new Date()}`))
+    .catch(err => console.log(err, `: err`))
+}
 
-// bot.launch()
-//   .then(() =>
-//     console.log(`bot started at ${new Date()}`))
-//   .catch(err => console.log(err, `: err`))
+
 
