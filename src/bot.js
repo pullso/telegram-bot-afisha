@@ -43,7 +43,7 @@ bot.start((ctx) =>
 const stage = new Scenes.Stage([settingsStage, eventStage])
 
 bot.use(
-  // Telegraf.log(),
+  Telegraf.log(),
   session(),
   sessionMiddleware,
   userMiddleware,
