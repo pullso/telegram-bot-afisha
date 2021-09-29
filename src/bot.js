@@ -1,4 +1,3 @@
-import {getEvents} from "./api.js";
 import moment from 'moment';
 import {Telegraf, session, Markup, Scenes} from "telegraf";
 import dotenv from "dotenv";
@@ -53,7 +52,6 @@ bot.use(
 
 bot.action('settings', ctx => ctx.scene.enter('settings'))
 bot.action('events', ctx => ctx.scene.enter('eventStage'))
-
 
 
 bot.on('text', async (ctx) => {
