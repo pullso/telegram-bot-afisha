@@ -56,7 +56,7 @@ async function resWithEvents(ctx) {
           ? event.url[0] : event.url}">${event.name}</a>`
 
 
-        return [url, time].join('\n')
+        return [time, url].join(' ')
       })
   ]
 
