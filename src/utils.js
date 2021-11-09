@@ -1,4 +1,4 @@
-import moment from "moment-timezone";
+import moment from "./moment.js";
 import _ from "lodash";
 
 export function paginate(array, {pageSize, pageIndex}) {

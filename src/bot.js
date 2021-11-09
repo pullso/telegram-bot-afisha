@@ -1,4 +1,3 @@
-import moment from 'moment-timezone';
 import {Telegraf, session, Markup, Scenes} from "telegraf";
 import dotenv from "dotenv";
 import sessionMiddleware from './middlewares/session.js'
@@ -7,8 +6,6 @@ import {eventStage} from "./middlewares/eventStage.js";
 import userMiddleware from "./middlewares/user.js";
 
 dotenv.config()
-moment.locale('ru')
-moment.tz.setDefault("Russia/Moscow");
 const {BOT_TOKEN, BOT_TOKEN_DEV} = process.env
 
 if (BOT_TOKEN === undefined && BOT_TOKEN_DEV === undefined) {
