@@ -1,6 +1,6 @@
 import {Markup, Scenes, Telegraf} from "telegraf";
 import {getEvents} from "../api.js";
-import moment from "moment";
+import moment from "moment-timezone";
 import {menuKeyboard} from "../bot.js";
 import {getFormattedDates, paginate} from "../utils.js";
 import _ from "lodash";

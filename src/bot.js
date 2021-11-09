@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {Telegraf, session, Markup, Scenes} from "telegraf";
 import dotenv from "dotenv";
 import sessionMiddleware from './middlewares/session.js'
@@ -8,6 +8,7 @@ import userMiddleware from "./middlewares/user.js";
 
 dotenv.config()
 moment.locale('ru')
+moment.tz.setDefault("Russia/Moscow");
 const {BOT_TOKEN, BOT_TOKEN_DEV} = process.env
 
 if (BOT_TOKEN === undefined && BOT_TOKEN_DEV === undefined) {
@@ -31,7 +32,7 @@ export const menuKeyboard = Markup
 
 
 bot.start((ctx) =>
-  ctx.reply(`Привет, ${ctx.message.chat.first_name}.\nМеня зовут Павел)\nЯ создал этого бота, чтобы ты быстрее находил интересные ивенты\nЕсли будут идеи по улучшению бота - пиши @pullso`, Markup
+  ctx.reply(`Привет, ${ctx.message.chat.first_name}.\nМеня зовут Павел)\nЯ создал этого бота, чтобы ты быстрее находили интересные ивенты\nЕсли будут идеи по улучшению бота - пиши @pullso`, Markup
     .inlineKeyboard([
       Markup.button.callback('⚙ Настроить поиск', 'settings')
     ])
