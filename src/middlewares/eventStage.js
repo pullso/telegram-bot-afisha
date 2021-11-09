@@ -2,34 +2,78 @@ import {Markup, Scenes, Telegraf} from "telegraf";
 import {getEvents} from "../api.js";
 import moment from "moment";
 import {menuKeyboard} from "../bot.js";
+import {getFormattedDates, paginate} from "../utils.js";
+import _ from "lodash";
 
 const {WizardScene} = Scenes
 
-let eventLimit = 5
+const pageSize = 10
+let pageIndex = 1
 
-function getFormattedDates(text) {
-  const settings = {}
-  if (text === 'Завтра') {
-    settings.starts_at_min = moment().add(1, 'days').startOf('day').format()
-    settings.starts_at_max = moment().endOf('day').add(1, 'days').format()
-  } else if (text === 'Выходные') {
-    settings.starts_at_min = moment().day(6).startOf('day').format()
-    settings.starts_at_max = moment().day(7).endOf('day').format()
-  } else {
-    settings.starts_at_max = moment().endOf('day').format()
-  }
+function parseEvents(data) {
+  const {values} = data
+  const events = _.groupBy(values, 'name')
+  _.each(events, groupEvent => {
+    if (groupEvent.length > 1) {
+      const name = groupEvent[0].name
 
-  return settings
+      const result = {
+        name,
+        id: _.map(groupEvent, e => e.id),
+        starts_at: _.map(groupEvent, e => e.starts_at),
+        url: _.map(groupEvent, e => e.url)
+      }
+
+      events[name] = [result]
+    }
+  })
+
+  return _.values(events)
+    .map(el => el[0])
 }
 
 async function resWithEvents(ctx) {
-  const count = ctx.session.events.length >= eventLimit ? eventLimit : ctx.session.events.length
-  const events = ctx.session.events.splice(0, count).map(el => `${el.name}\n${moment(el.starts_at).format('llll')}\n${el.url}`)
+  const sessionEvents = [...ctx?.session?.events]
+  const events = paginate(
+    sessionEvents,
+    {pageSize, pageIndex}
+  )
 
-  await ctx.replyWithHTML(events.join('\n\n'), Markup.inlineKeyboard([
-    Markup.button.callback('Ещё', 'moreEvents'),
+  if (!events) return
+  const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
+  pageIndex = isLastPage ? 1 : pageIndex + 1;
+
+  const title = `<b>Афиша на ${moment(events[0]?.starts_at).format('L')}</b>`
+  const response = [
+    title,
+    ...events
+      .map(event => {
+        const time = _.isArray(event.starts_at)
+          ? _.map(event.starts_at, t => moment(t).format('HH:mm')).join(', ')
+          : moment(event.starts_at).format('HH:mm')
+
+        const url = `<a href="${_.isArray(event.url)
+          ? event.url[0] : event.url}">${event.name}</a>`
+
+
+        return [url, time].join('\n')
+      })
+  ]
+
+  const keyboard = Markup.inlineKeyboard([
+    Markup.button.callback('Ещё', 'moreEvents', isLastPage),
     Markup.button.callback('📋 Меню', 'menu')
-  ]))
+  ])
+
+  await ctx.replyWithHTML(
+    response.join('\n\n'),
+    {
+      disable_web_page_preview: true,
+      parse_mode: "HTML",
+      reply_markup: keyboard.reply_markup
+
+    },
+  )
 }
 
 const getDate = Telegraf.action(/date (.+)/, async ctx => {
@@ -62,14 +106,17 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
   }
 
   delete options.date
-  const data = await getEvents(options)
+  ctx.session.events = []
+  const {data} = await getEvents(options)
 
-  if (data && data.data && data.data.values && data.data.values.length) {
-    ctx.session.events = data.data.values
-    await ctx.reply(`Всего мероприятий: ${ctx.session.events.length}`)
+  if (data?.values?.length) {
+
+    ctx.session.events = parseEvents(data)
+
+    await ctx.reply(`Всего мероприятий: ${data.total}\nУникальных: ${_.keys(ctx.session.events).length}`)
     await resWithEvents(ctx)
   } else {
-    await ctx.reply('Что-то пошло не так...')
+    await ctx.reply('Мероприятия не найдены или что-то пошло не так...')
   }
 
   await ctx.wizard.next()
@@ -83,15 +130,16 @@ const moreEvents = Telegraf.action('moreEvents', async ctx => {
   }
 })
 
-
 export const eventStage = new WizardScene('eventStage', getDate, sendEvents, moreEvents)
 
 eventStage.enter(async ctx => {
-  await ctx.editMessageText('Выберите дату поиска:', Markup.inlineKeyboard([
-    [Markup.button.callback('Сегодня', 'date Сегодня'), Markup.button.callback('Завтра', 'date Завтра')],
-    [Markup.button.callback('Выходные', 'date Выходные')],
-    [Markup.button.callback('📋 Меню', 'menu')]
-  ]).resize())
+  await ctx.editMessageText(
+    'Выберите дату поиска:',
+    Markup.inlineKeyboard([
+      [Markup.button.callback('Сегодня', 'date Сегодня'), Markup.button.callback('Завтра', 'date Завтра')],
+      [Markup.button.callback('Выходные', 'date Выходные')],
+      [Markup.button.callback('📋 Меню', 'menu')]
+    ]).resize())
 })
 
 eventStage.action('menu', async ctx => {
