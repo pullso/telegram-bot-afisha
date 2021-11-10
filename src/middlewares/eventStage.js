@@ -33,7 +33,8 @@ function parseEvents(data) {
 }
 
 async function resWithEvents(ctx) {
-  const sessionEvents = [...ctx?.session?.events]
+  const sessionEvents = ctx?.session?.events
+  console.log(sessionEvents, 'events')
   const events = paginate(
     sessionEvents,
     {pageSize, pageIndex}
@@ -43,7 +44,10 @@ async function resWithEvents(ctx) {
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
   pageIndex = isLastPage ? 1 : pageIndex + 1;
 
-  const title = `<b>Афиша на ${moment(events[0]?.starts_at).format('L')}</b>`
+  const date = _.isArray(events[0]?.starts_at) ? events[0]?.starts_at[0] : events[0]?.starts_at
+
+  const title = `<b>Афиша на ${moment(date).format('L')}</b>`
+
   const response = [
     title,
     ...events
@@ -54,7 +58,6 @@ async function resWithEvents(ctx) {
 
         const url = `<a href="${_.isArray(event.url)
           ? event.url[0] : event.url}">${event.name}</a>`
-
 
         return [time, url].join(' ')
       })
@@ -71,7 +74,6 @@ async function resWithEvents(ctx) {
       disable_web_page_preview: true,
       parse_mode: "HTML",
       reply_markup: keyboard.reply_markup
-
     },
   )
 }

@@ -19,8 +19,7 @@ if (process.env.NODE_ENV === 'production') {
   console.log(`bot started with webhook at ${time}`)
 } else {
   bot.launch()
-    .then(() =>
-      console.log(`bot started at ${time}`))
+    .then(() => console.log(`bot started at ${time}`))
     .catch(err => console.log(err, `: err`))
 }
 

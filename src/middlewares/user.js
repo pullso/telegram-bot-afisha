@@ -2,7 +2,7 @@ import {User} from "../mongoModel.js";
 import mongoose from "mongoose";
 
 export default async (ctx, next) => {
-  if (!ctx.session.user || !ctx.session.user.options.cities) {
+  if (!ctx?.session?.user || !ctx?.session?.user?.options?.cities) {
     const user = await User.findOne({
       tgId: ctx.from.id
     })
