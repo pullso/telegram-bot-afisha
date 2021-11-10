@@ -40,11 +40,26 @@ async function resWithEvents(ctx) {
     {pageSize, pageIndex}
   )
 
-  if (!events) return
+  if (!events || !events.length) {
+    await ctx.replyWithHTML(
+      'Проблема с мероприятиями',
+      {
+        disable_web_page_preview: true,
+        parse_mode: "HTML",
+        reply_markup: keyboard.reply_markup
+      },
+    )
+    // TODO remove console
+    console.log(ctx.session.events, `: ctx.session.events`)
+    return 
+  }
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
+
   pageIndex = isLastPage ? 1 : pageIndex + 1;
 
-  const date = _.isArray(events[0]?.starts_at) ? events[0]?.starts_at[0] : events[0]?.starts_at
+  const date = _.isArray(events[0]?.starts_at)
+    ? events[0]?.starts_at[0]
+    : events[0]?.starts_at
 
   const title = `<b>Афиша на ${moment(date).format('L')}</b>`
 
