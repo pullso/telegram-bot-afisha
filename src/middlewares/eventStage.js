@@ -33,7 +33,7 @@ function parseEvents(data) {
 }
 
 async function resWithEvents(ctx) {
-  const sessionEvents = ctx?.session?.events
+  const sessionEvents = [...ctx?.session?.events]
   console.log(sessionEvents, 'events')
   const events = paginate(
     sessionEvents,
