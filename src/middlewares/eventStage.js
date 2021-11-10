@@ -34,7 +34,6 @@ function parseEvents(data) {
 
 async function resWithEvents(ctx) {
   const sessionEvents = [...ctx?.session?.events]
-  console.log(sessionEvents, 'events')
   const events = paginate(
     sessionEvents,
     {pageSize, pageIndex}
@@ -51,7 +50,7 @@ async function resWithEvents(ctx) {
     )
     // TODO remove console
     console.log(ctx.session.events, `: ctx.session.events`)
-    return 
+    return
   }
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
 
