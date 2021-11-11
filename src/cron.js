@@ -5,7 +5,11 @@ const serverURL = 'https://telegram-afisha.herokuapp.com/'
 
 async function pingServer() {
   console.log(new Date(), serverURL, `: ping server`,)
-  await axios.get(serverURL)
+  try {
+    await axios.get(serverURL)
+  } catch (err) {
+    console.log(err, `: err`)
+  }
 }
 
 export function cronStart() {
