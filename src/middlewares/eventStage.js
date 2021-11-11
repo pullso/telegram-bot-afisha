@@ -10,7 +10,7 @@ const {WizardScene} = Scenes
 const pageSize = 10
 let pageIndex = 1
 
-function parseEvents(data) {
+function prepareEvents(data) {
   const {values} = data
   const events = _.groupBy(values, 'name')
   _.each(events, groupEvent => {
@@ -28,31 +28,18 @@ function parseEvents(data) {
     }
   })
 
-  return _.values(events)
-    .map(el => el[0])
+  return _.values(events).map(el => el[0])
 }
 
-async function resWithEvents(ctx) {
-  const sessionEvents = [...ctx?.session?.events]
+async function getEventsResponse({session = {}}) {
+  if (!session.events) return null
+  const sessionEvents = [...session?.events]
 
   const events = paginate(
     sessionEvents,
     {pageSize, pageIndex}
   )
 
-  if (!events || !events.length) {
-    await ctx.replyWithHTML(
-      'Проблема с мероприятиями',
-      {
-        disable_web_page_preview: true,
-        parse_mode: "HTML",
-        reply_markup: keyboard.reply_markup
-      },
-    )
-    // TODO remove console
-    console.log(ctx.session.events, `: ctx.session.events`)
-    return
-  }
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
 
   pageIndex = isLastPage ? 1 : pageIndex + 1;
@@ -77,6 +64,14 @@ async function resWithEvents(ctx) {
         return [time, url].join(' ')
       })
   ]
+  return {response, isLastPage}
+}
+
+async function sendEventResponse(ctx, {response, isLastPage}) {
+  if (!response || !response.length) {
+    await ctx.reply('Что-то пошло не так с мероприятиями...', menuKeyboard)
+    return
+  }
 
   const keyboard = Markup.inlineKeyboard([
     Markup.button.callback('Ещё', 'moreEvents', isLastPage),
@@ -119,7 +114,7 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
   const options = {
     ...ctx?.session?.settings,
     ...ctx?.session?.user?.options,
-    ...getFormattedDates(ctx.session.settings.date)
+    ...getFormattedDates(ctx?.session?.settings?.date)
   }
 
   delete options.date
@@ -128,14 +123,15 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
 
   if (data?.values?.length) {
 
-    ctx.session.events = parseEvents(data)
+    ctx.session.events = prepareEvents(data)
 
     await ctx.reply(`Всего мероприятий: ${data.total}\nУникальных: ${_.keys(ctx.session.events).length}`)
-    await resWithEvents(ctx)
+
+    const eventsData = await getEventsResponse(ctx)
+    await sendEventResponse(ctx, eventsData);
   } else {
     await ctx.reply('Мероприятия не найдены...', menuKeyboard)
   }
-
   await ctx.wizard.next()
 })
 
@@ -143,11 +139,17 @@ const moreEvents = Telegraf.action('moreEvents', async ctx => {
   if (ctx.session.events.length === 0) {
     await ctx.reply('Больше мероприятий нет\n📋 Меню', menuKeyboard)
   } else {
-    await resWithEvents(ctx)
+    const data = await getEventsResponse(ctx)
+    await sendEventResponse(ctx, data);
   }
 })
 
-export const eventStage = new WizardScene('eventStage', getDate, sendEvents, moreEvents)
+export const eventStage = new WizardScene(
+  'eventStage',
+  getDate,
+  sendEvents,
+  moreEvents
+)
 
 eventStage.enter(async ctx => {
   await ctx.editMessageText(
