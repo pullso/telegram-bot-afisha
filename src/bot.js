@@ -4,6 +4,7 @@ import sessionMiddleware from './middlewares/session.js'
 import {settingsStage} from "./middlewares/settingsStage.js";
 import {eventStage} from "./middlewares/eventStage.js";
 import userMiddleware from "./middlewares/user.js";
+import logMiddleware from "./middlewares/log.js";
 
 dotenv.config()
 const {BOT_TOKEN, BOT_TOKEN_DEV} = process.env
@@ -43,6 +44,7 @@ bot.use(
   session(),
   sessionMiddleware,
   userMiddleware,
+  logMiddleware,
   stage.middleware(),
 )
 
