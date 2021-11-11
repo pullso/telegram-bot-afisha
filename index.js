@@ -1,6 +1,8 @@
 import {bot} from "./src/bot.js";
 import {connectDb} from './src/connectDb.js'
 import moment from "./src/moment.js";
+import {cronStart} from "./src/cron.js";
+
 
 if (process.env.BOT_TOKEN === undefined) {
   throw new TypeError('not working telegram token')
@@ -12,6 +14,8 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 
 await connectDb().catch(error => console.error(error))
 const time = moment().format()
+
+cronStart()
 
 if (process.env.NODE_ENV === 'production') {
   await bot.telegram.setWebhook(`${URL}/bot${BOT_TOKEN}`)

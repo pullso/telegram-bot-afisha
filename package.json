@@ -19,6 +19,7 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mongoose": "^6.0.7",
+    "node-cron": "^3.0.0",
     "telegraf": "^4.4.2"
   },
   "devDependencies": {
