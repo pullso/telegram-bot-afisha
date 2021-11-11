@@ -34,6 +34,7 @@ function parseEvents(data) {
 
 async function resWithEvents(ctx) {
   const sessionEvents = [...ctx?.session?.events]
+
   const events = paginate(
     sessionEvents,
     {pageSize, pageIndex}
@@ -116,8 +117,8 @@ const getDate = Telegraf.action(/date (.+)/, async ctx => {
 
 const sendEvents = Telegraf.action('sendEvents', async ctx => {
   const options = {
-    ...ctx.session.settings,
-    ...ctx.session.user.options,
+    ...ctx?.session?.settings,
+    ...ctx?.session?.user?.options,
     ...getFormattedDates(ctx.session.settings.date)
   }
 
@@ -132,7 +133,7 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
     await ctx.reply(`Всего мероприятий: ${data.total}\nУникальных: ${_.keys(ctx.session.events).length}`)
     await resWithEvents(ctx)
   } else {
-    await ctx.reply('Мероприятия не найдены или что-то пошло не так...')
+    await ctx.reply('Мероприятия не найдены...', menuKeyboard)
   }
 
   await ctx.wizard.next()
