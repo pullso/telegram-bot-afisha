@@ -7,13 +7,13 @@ async function pingServer() {
   console.log(new Date(), serverURL, `: ping server`,)
   try {
     await axios.get(serverURL)
-  } catch (err) {
-    console.log(err, `: err`)
+  } catch (error) {
+    console.log(error?.message);
   }
 }
 
 export function cronStart() {
   console.log(`cron started`)
-  cron.schedule('*/15 * * * *', pingServer, {})
+  cron.schedule('* */15 * * * *', pingServer, {})
 }
 
