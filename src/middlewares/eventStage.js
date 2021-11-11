@@ -111,11 +111,11 @@ const getDate = Telegraf.action(/date (.+)/, async ctx => {
     ? 'Бесплатно'
     : `от ${price_min} до ${price_max}`
 
-  await ctx.editMessageText(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`, keyboard)
-  ctx.wizard.next()
+  await ctx.reply(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
+  return ctx.wizard.steps[ctx.wizard.cursor + 1](ctx);
 })
 
-const sendEvents = Telegraf.action('sendEvents', async ctx => {
+const sendEvents = async ctx => {
   const options = {
     ...ctx?.session?.settings,
     ...ctx?.session?.user?.options,
@@ -130,15 +130,13 @@ const sendEvents = Telegraf.action('sendEvents', async ctx => {
 
     ctx.session.events = prepareEvents(data)
 
-    await ctx.reply(`Всего мероприятий: ${data.total}\nУникальных: ${_.keys(ctx.session.events).length}`)
-
     const eventsData = await getEventsResponse(ctx)
     await sendEventResponse(ctx, eventsData);
   } else {
     await ctx.reply('Мероприятия не найдены...', menuKeyboard)
   }
   await ctx.wizard.next()
-})
+}
 
 const moreEvents = Telegraf.action('moreEvents', async ctx => {
   if (ctx.session.events.length === 0) {
