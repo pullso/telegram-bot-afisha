@@ -61,7 +61,7 @@ const saveSettings = Telegraf.action('save', async (ctx) => {
     if (ctx.session.user) ctx.session.user = null
   }
 
-  await ctx.editMessageText('🤙 Настройки цены и города сохранены\n📋 Меню', menuKeyboard)
+  await ctx.scene.enter('eventStage')
 })
 
 export const settingsStage = new WizardScene('settings', getCity, getMinPrice, getMaxPrice, saveSettings)
