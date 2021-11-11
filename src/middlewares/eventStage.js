@@ -40,6 +40,11 @@ async function getEventsResponse({session = {}}) {
     {pageSize, pageIndex}
   )
 
+  // TODO remove console
+  console.log(events.length, `: events.length`)
+  console.log(sessionEvents.length, `: events.length`)
+  if (!events.length) return null
+
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
 
   pageIndex = isLastPage ? 1 : pageIndex + 1;
