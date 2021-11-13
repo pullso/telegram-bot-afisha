@@ -32,7 +32,8 @@ function prepareEvents(data) {
 }
 
 async function getEventsResponse({session = {}}) {
-  if (!session.events) return null
+  if (!session.events) return {}
+
   const sessionEvents = [...session?.events]
 
   const events = paginate(
@@ -72,7 +73,7 @@ async function getEventsResponse({session = {}}) {
   return {response, isLastPage}
 }
 
-async function sendEventResponse(ctx, {response, isLastPage}) {
+async function sendEventResponse(ctx, {response = null, isLastPage = false}) {
   if (!response || !response.length) {
     await ctx.reply('Что-то пошло не так с мероприятиями...', menuKeyboard)
     return
@@ -131,6 +132,7 @@ const sendEvents = async ctx => {
     ctx.session.events = prepareEvents(data)
 
     const eventsData = await getEventsResponse(ctx)
+
     await sendEventResponse(ctx, eventsData);
   } else {
     await ctx.reply('Мероприятия не найдены...', menuKeyboard)
@@ -155,13 +157,15 @@ export const eventStage = new WizardScene(
 )
 
 eventStage.enter(async ctx => {
-  await ctx.editMessageText(
+  const {message_id} = await ctx.editMessageText(
     'Выберите дату поиска:',
     Markup.inlineKeyboard([
       [Markup.button.callback('Сегодня', 'date Сегодня'), Markup.button.callback('Завтра', 'date Завтра')],
       [Markup.button.callback('Выходные', 'date Выходные')],
       [Markup.button.callback('📋 Меню', 'menu')]
     ]).resize())
+
+  ctx.session.deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
 })
 
 eventStage.action('menu', async ctx => {

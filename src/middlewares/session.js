@@ -3,6 +3,15 @@ export default function (ctx, next) {
     settings: {},
     events: [],
     eventsCount: 0,
+    deleteMessageIds: []
+  }
+
+  if (ctx.session?.deleteMessageIds?.length) {
+    ctx.session.deleteMessageIds
+      .forEach(async ({chat_id, message_id},index) => {
+        await ctx.telegram.deleteMessage(chat_id, message_id)
+        delete ctx.session.deleteMessageIds[index]
+      })
   }
 
   return next()
