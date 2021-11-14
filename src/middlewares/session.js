@@ -3,7 +3,11 @@ export default function (ctx, next) {
     settings: {},
     events: [],
     eventsCount: 0,
-    deleteMessageIds: []
+    deleteMessageIds: [],
+    page: {
+      pageIndex: 1,
+      pageSize: 10
+    }
   }
 
   if (ctx.session?.deleteMessageIds?.length) {

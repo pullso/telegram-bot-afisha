@@ -1,7 +1,7 @@
 import moment from "./moment.js";
 import _ from "lodash";
 
-export function paginate(array, {pageSize, pageIndex}) {
+export function paginate(array, {pageIndex, pageSize}) {
   if (!array) return null
   return _.slice(array, (pageIndex - 1) * pageSize, pageIndex * pageSize)
 }

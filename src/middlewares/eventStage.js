@@ -7,8 +7,6 @@ import _ from "lodash";
 
 const {WizardScene} = Scenes
 
-const pageSize = 10
-let pageIndex = 1
 
 function prepareEvents(data) {
   const {values} = data
@@ -31,24 +29,28 @@ function prepareEvents(data) {
   return _.values(events).map(el => el[0])
 }
 
-async function getEventsResponse({session = {}}) {
+async function getEventsResponse(ctx) {
+  const session = ctx.session
+  const {pageIndex, pageSize} = ctx.session?.page
   if (!session.events) return {}
 
   const sessionEvents = [...session?.events]
 
   const events = paginate(
     sessionEvents,
-    {pageSize, pageIndex}
+    session.page
   )
 
   // TODO remove console
   console.log(events.length, `: events.length`)
-  console.log(sessionEvents.length, `: events.length`)
   if (!events.length) return null
 
   const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
-
-  pageIndex = isLastPage ? 1 : pageIndex + 1;
+  session.page.pageIndex = isLastPage ? 1 : pageIndex + 1;
+  const prevValue = session.page.pageIndex
+  setTimeout(() => {
+    if (prevValue === session.page.pageIndex) session.page.pageIndex = 1
+  }, 1 * 60 * 1000)
 
   const date = _.isArray(events[0]?.starts_at)
     ? events[0]?.starts_at[0]
@@ -64,14 +66,17 @@ async function getEventsResponse({session = {}}) {
           ? _.map(event.starts_at, t => moment(t).format('HH:mm')).join(', ')
           : moment(event.starts_at).format('HH:mm')
 
-        const name = event.name.replace(/&amp;quot;/g,'"')
+        const name = event.name.replace(/&amp;quot;/g, '"')
 
         const url = `<a href="${_.isArray(event.url)
           ? event.url[0] : event.url}">${name}</a>`
 
         return [time, url].join(' ')
-      })
+      }),
   ]
+
+  if (isLastPage) response.push('На этот день больше мероприятий нет👨‍💻\nНу вот и все, ребята🤷‍♂️')
+
   return {response, isLastPage}
 }
 
