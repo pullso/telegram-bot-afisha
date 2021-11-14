@@ -11,4 +11,5 @@ export async function getEvents(options = {}) {
   }
 
   return await axios.get(`/events.json?${qs.stringify(opt)}`)
+    .catch(err => console.log(err, `: api error`))
 }

@@ -54,7 +54,7 @@ async function getEventsResponse({session = {}}) {
     ? events[0]?.starts_at[0]
     : events[0]?.starts_at
 
-  const title = `<b>Афиша на ${moment(date).format('L')}</b>`
+  const title = `<b>Афиша на ${moment(date).format('L')}</b> от @afishatimepadbot`
 
   const response = [
     title,
@@ -64,8 +64,10 @@ async function getEventsResponse({session = {}}) {
           ? _.map(event.starts_at, t => moment(t).format('HH:mm')).join(', ')
           : moment(event.starts_at).format('HH:mm')
 
+        const name = event.name.replace(/&amp;quot;/g,'"')
+
         const url = `<a href="${_.isArray(event.url)
-          ? event.url[0] : event.url}">${event.name}</a>`
+          ? event.url[0] : event.url}">${name}</a>`
 
         return [time, url].join(' ')
       })
@@ -96,11 +98,6 @@ async function sendEventResponse(ctx, {response = null, isLastPage = false}) {
 
 const getDate = Telegraf.action(/date (.+)/, async ctx => {
   ctx.session.settings.date = ctx.match[1]
-
-  const keyboard = Markup.inlineKeyboard([
-    Markup.button.callback('Найти мероприятие', 'sendEvents'),
-    Markup.button.callback('📋 Меню', 'menu')
-  ]).resize()
 
   const opt = {
     ...ctx.session.settings,
