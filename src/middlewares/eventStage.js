@@ -75,7 +75,7 @@ async function getEventsResponse(ctx) {
       }),
   ]
 
-  if (isLastPage) response.push('‍💻\nНу вот и все, ребята🤷‍♂️')
+  if (isLastPage) response.push('Ну вот и все, ребята🤷‍♂️')
 
   return {response, isLastPage}
 }
