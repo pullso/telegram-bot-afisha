@@ -1,12 +1,12 @@
 import {Telegraf, session, Markup, Scenes} from "telegraf";
-import dotenv from "dotenv";
 import sessionMiddleware from './middlewares/session.js'
-import {settingsStage} from "./middlewares/settingsStage.js";
-import {eventStage} from "./middlewares/eventStage.js";
+import {settingsStage} from "./middlewares/settings/settingsStage.js";
+import {eventStage} from "./middlewares/event/eventStage.js";
 import userMiddleware from "./middlewares/user.js";
 import logMiddleware from "./middlewares/log.js";
+import BotController from "./controllers/BotController.js";
+import editMessagesMiddleware from "./middlewares/editMessages.js";
 
-dotenv.config()
 const {BOT_TOKEN, BOT_TOKEN_DEV} = process.env
 
 if (BOT_TOKEN === undefined && BOT_TOKEN_DEV === undefined) {
@@ -29,13 +29,7 @@ export const menuKeyboard = Markup
   .resize()
 
 
-bot.start((ctx) =>
-  ctx.reply(`Привет, ${ctx.message.chat.first_name}.\nМеня зовут Павел)\nЯ создал этого бота, чтобы помочь тебе быстрее находить интересные ивенты🖤\nЕсли будут идеи по улучшению бота - пиши @pullso`, Markup
-    .inlineKeyboard([
-      Markup.button.callback('⚙ Настроить поиск', 'settings')
-    ])
-    .oneTime()
-    .resize()))
+bot.start(BotController.start)
 
 const stage = new Scenes.Stage([settingsStage, eventStage])
 
@@ -44,6 +38,7 @@ bot.use(
   session(),
   sessionMiddleware,
   userMiddleware,
+  editMessagesMiddleware,
   logMiddleware,
   stage.middleware(),
 )

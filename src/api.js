@@ -1,4 +1,4 @@
-import axios from "./axios.js";
+import axios from "./plugins/axios.js";
 import qs from 'querystring'
 
 export async function getEvents(options = {}) {
