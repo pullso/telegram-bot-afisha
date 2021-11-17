@@ -54,9 +54,8 @@ class EventsController {
       ? 'Бесплатно'
       : `от ${price_min} до ${price_max}`
 
-    const {message_id} = await ctx.reply(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
+    await ctx.reply(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
 
-    ctx.session.deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
     return ctx.wizard.steps[ctx.wizard.cursor + 1](ctx);
   }
 }
