@@ -1,15 +1,13 @@
 import cron from 'node-cron'
 import axios from 'axios'
 
-class CronController {
-  constructor(url) {
-    this.url = url
-  }
+const url = 'https://telegram-afisha.herokuapp.com/'
 
+class CronController {
   async ping() {
-    console.log(new Date(), this.url, `: ping server`,)
+    console.log(new Date(), url, `: ping server`,)
     try {
-      await axios.get(this.url)
+      await axios.get(url)
     } catch (error) {
       console.log(error?.message);
     }
@@ -21,4 +19,4 @@ class CronController {
   }
 }
 
-export default new CronController(process.env.WEBHOOK_URL)
+export default new CronController()
