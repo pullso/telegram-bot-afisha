@@ -80,7 +80,9 @@ class EventsService {
           const url = `<a href="${_.isArray(event.url)
             ? event.url[0] : event.url}">${name}</a>`
 
-          return [time, url].join(' ')
+          const category = `(${event?.categories[0]?.name})` || ''
+
+          return [time, url, category].join(' ')
         }),
     ]
 
