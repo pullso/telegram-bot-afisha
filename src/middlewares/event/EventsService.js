@@ -23,6 +23,7 @@ class EventsService {
 
     return _.values(events).map(el => el[0])
   }
+
   async getEvents(ctx) {
     const options = {
       ...ctx?.session?.settings,
@@ -38,6 +39,7 @@ class EventsService {
       console.log(e, `:api error`)
     }
   }
+
   async getEventsResponse(ctx) {
     const session = ctx.session
     const {pageIndex, pageSize} = ctx.session?.page
@@ -80,7 +82,7 @@ class EventsService {
           const url = `<a href="${_.isArray(event.url)
             ? event.url[0] : event.url}">${name}</a>`
 
-          const category = `(${event?.categories[0]?.name})` || ''
+          const category = event?.categories?.length ? `(${event?.categories[0]?.name})` : ''
 
           return [time, url, category].join(' ')
         }),
