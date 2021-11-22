@@ -7,6 +7,7 @@ class SettingsController {
         [Markup.button.callback('Москва', 'city Москва')],
         [Markup.button.callback('Санкт-Петербург', 'city Санкт-Петербург')],
         [Markup.button.callback('Екатеринбург', 'city Екатеринбург')],
+        [Markup.button.callback('Онлайн', 'city Без города')],
         [Markup.button.callback('📋 Меню', 'menu')]
       ]
     ).resize())
