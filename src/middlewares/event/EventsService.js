@@ -9,14 +9,13 @@ class EventsService {
     _.each(events, groupEvent => {
       if (groupEvent.length > 1) {
         const name = groupEvent[0].name
-        const categories = groupEvent[0].categories
 
         const result = {
           name,
           id: _.map(groupEvent, e => e.id),
           starts_at: _.map(groupEvent, e => e.starts_at),
-          url: _.map(groupEvent, e => e.url),
-          categories
+          url: groupEvent[0].url,
+          categories: groupEvent[0].categories
         }
 
         events[name] = [result]
