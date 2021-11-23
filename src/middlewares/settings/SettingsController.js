@@ -22,6 +22,7 @@ class SettingsController {
 
       await user.save()
       ctx.session.user = null
+      ctx.session = null
     }
 
     await ctx.scene.enter('eventStage')
