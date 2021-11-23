@@ -17,19 +17,19 @@ class SettingsController {
     const user = await UserService.find(ctx.from.id)
 
     if (user) {
-      const {price_max, price_min, cities} = ctx.session.settings
+      const {price_max, price_min, cities} = ctx.session[ctx.from.id].settings
       user.options = {price_max, price_min, cities}
 
       await user.save()
       await ctx.telegram.sendMessage(process.env.ADMIN_CHAT_ID, ctx.from.id + ' ' + user)
-      ctx.session.user = null
+      ctx.session[ctx.from.id].user = null
     }
 
     await ctx.scene.enter('eventStage')
   }
 
   async getMaxPrice(ctx) {
-    ctx.session.settings.price_max = ctx.match[1]
+    ctx.session[ctx.from.id].settings.price_max = ctx.match[1]
     await ctx.editMessageText('Сохранить настройки?', Markup.inlineKeyboard([
         Markup.button.callback('☑️ Да', 'save'),
         Markup.button.callback('⬅️ Нет, перейти в Меню', 'menu', !Boolean(ctx?.session?.user?.options?.cities))
@@ -40,7 +40,7 @@ class SettingsController {
 
 
   async getCity(ctx) {
-    ctx.session.settings.cities = ctx.match[1]
+    ctx.session[ctx.from.id].settings.cities = ctx.match[1]
     await ctx.editMessageText('Минимальная цена мероприятия',
       Markup.inlineKeyboard([
           [Markup.button.callback('Бесплатно', 'min 0'),
@@ -57,7 +57,7 @@ class SettingsController {
 
   async getMinPrice(ctx) {
     const min = ctx.match[1]
-    ctx.session.settings.price_min = min
+    ctx.session[ctx.from.id].settings.price_min = min
     await ctx.editMessageText('Максимальная цена мероприятия',
       Markup.inlineKeyboard([
           [Markup.button.callback('Бесплатно', 'max 0', min > 0),

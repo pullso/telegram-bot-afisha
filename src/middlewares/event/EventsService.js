@@ -26,10 +26,11 @@ class EventsService {
   }
 
   async getEvents(ctx) {
+    const session = ctx.session[ctx.from.id]
     const options = {
-      ...ctx?.session?.settings,
-      ...ctx?.session?.user?.options,
-      ...getFormattedDates(ctx?.session?.settings?.date)
+      ...session?.settings,
+      ...session?.user?.options,
+      ...getFormattedDates(session?.settings?.date)
     }
     delete options.date
 
@@ -42,8 +43,8 @@ class EventsService {
   }
 
   async getEventsResponse(ctx) {
-    const session = ctx.session
-    const {pageIndex, pageSize} = ctx.session?.page
+    const session = ctx.session[ctx.from.id]
+    const {pageIndex, pageSize} = session?.page
     if (!session.events) return {}
 
     const sessionEvents = [...session?.events]

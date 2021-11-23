@@ -14,11 +14,11 @@ class EventsController {
         [Markup.button.callback('📋 Меню', 'menu')]
       ]).resize())
 
-    ctx.session.deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
+    ctx.session[ctx.from.id].deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
   }
 
   async moreEvents(ctx) {
-    if (ctx.session?.events?.length === 0) {
+    if (ctx.session[ctx.from.id].events?.length === 0) {
       await ctx.reply('Больше мероприятий нет\n📋 Меню', menuKeyboard)
     } else {
       const data = await EventsService.getEventsResponse(ctx)
@@ -27,27 +27,28 @@ class EventsController {
   }
 
   async sendEvents(ctx) {
-    ctx.session.events = []
+    ctx.session[ctx.from.id].events = []
     const events = await EventsService.getEvents(ctx)
 
     if (events?.values?.length) {
-      ctx.session.events = EventsService.prepareEvents(events)
+      ctx.session[ctx.from.id].events = EventsService.prepareEvents(events)
       const eventsData = await EventsService.getEventsResponse(ctx)
       await sendEventResponse(ctx, eventsData);
       await ctx.wizard.next()
     } else {
-      ctx.session.settings = {}
+      ctx.session[ctx.from.id].settings = {}
       await ctx.reply('Мероприятия не найдены...', menuKeyboard)
       await ctx.scene.leave()
     }
   }
 
   async getDate(ctx) {
-    ctx.session.settings.date = ctx.match[1]
+    const session = ctx.session[ctx.from.id]
+    session.settings.date = ctx.match[1]
     const user = await UserService.find(ctx.from.id)
 
     const opt = {
-      ...ctx.session.settings,
+      ...session.settings,
       ...user.options,
     }
 

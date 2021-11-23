@@ -10,7 +10,7 @@ const initSession = {
 }
 
 export default function (ctx, next) {
-  if (!ctx.session) ctx.session = initSession
+  if (!ctx.session) ctx.session = {[ctx.from.id]: initSession}
   return next()
 }
 

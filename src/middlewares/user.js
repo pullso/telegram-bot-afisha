@@ -5,7 +5,7 @@ export default async (ctx, next) => {
     const id = ctx?.from?.id
     const user = await UserService.find(id)
     if (!user) await UserService.create(id)
-    ctx.session.user = user
+    ctx.session[ctx.from.id].user = user
   }
 
   return next()
