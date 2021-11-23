@@ -55,6 +55,7 @@ class EventsController {
       : `от ${price_min} до ${price_max}`
 
     await ctx.reply(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
+    await ctx.telegram.sendMessage(process.env.ADMIN_CHAT_ID, `${ctx.from.id}\n🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
 
     return ctx.wizard.steps[ctx.wizard.cursor + 1](ctx);
   }
