@@ -14,13 +14,14 @@ class SettingsController {
   }
 
   async save(ctx) {
-    const user = await UserService.find(ctx.session?.user?.tgId)
+    const user = await UserService.find(ctx.from.id)
 
     if (user) {
       const {price_max, price_min, cities} = ctx.session.settings
       user.options = {price_max, price_min, cities}
 
       await user.save()
+      await ctx.telegram.sendMessage(process.env.ADMIN_CHAT_ID, ctx.from.id + ' ' + user)
       ctx.session.user = null
     }
 
