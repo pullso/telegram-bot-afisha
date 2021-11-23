@@ -1,6 +1,7 @@
 import {Markup} from "telegraf";
 import {menuKeyboard} from "../../bot.js";
 import EventsService from "./EventsService.js";
+import UserService from "../../services/UserService.js";
 
 class EventsController {
   async enter(ctx) {
@@ -43,10 +44,11 @@ class EventsController {
 
   async getDate(ctx) {
     ctx.session.settings.date = ctx.match[1]
+    const user = await UserService.find(ctx.from.id)
 
     const opt = {
       ...ctx.session.settings,
-      ...ctx.session.user.options,
+      ...user.options,
     }
 
     const {price_max, price_min} = opt
