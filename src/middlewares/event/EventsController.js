@@ -2,20 +2,22 @@ import {Markup} from "telegraf";
 import {menuKeyboard} from "../../bot.js";
 import EventsService from "./EventsService.js";
 import UserService from "../../services/UserService.js";
+import moment from "../../plugins/moment.js";
 
 class EventsController {
   async enter(ctx) {
     const {message_id} = await ctx.editMessageText(
       'Выберите дату поиска:',
       Markup.inlineKeyboard([
-        [Markup.button.callback('▫️Сегодня (все)', 'date Сегодня'),
-          Markup.button.callback('▫️Завтра (все)', 'date Завтра')],
-        [Markup.button.callback('▪️Сегодня (вечер)', 'date Сегодня (17:00 - 00:00)'),
+        [Markup.button.callback('▫️Сегодня', 'date Сегодня'),
+          Markup.button.callback('▫️Завтра', 'date Завтра')],
+        [Markup.button.callback('▪️Сегодня (вечер)', 'date Сегодня (17:00 - 00:00)', moment().hour() >= 17),
           Markup.button.callback('▪️Завтра (вечер)', 'date Завтра (17:00 - 00:00)')],
-        [Markup.button.callback('Выходные', 'date Выходные')],
+        [Markup.button.callback('▫️Выходные', 'date Выходные')],
         [Markup.button.callback('📋 Меню', 'menu')]
       ]).resize())
 
+    ctx.session[ctx.from.id].page.pageIndex = 1;
     ctx.session[ctx.from.id].deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
   }
 

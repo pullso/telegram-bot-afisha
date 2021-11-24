@@ -60,10 +60,6 @@ class EventsService {
 
     const isLastPage = Math.ceil(sessionEvents.length / pageSize) === pageIndex
     session.page.pageIndex = isLastPage ? 1 : pageIndex + 1;
-    const prevValue = session.page.pageIndex
-    setTimeout(() => {
-      if (prevValue === session.page.pageIndex) session.page.pageIndex = 1
-    }, 1 * 60 * 1000)
 
     const date = _.isArray(events[0]?.starts_at)
       ? events[0]?.starts_at[0]
