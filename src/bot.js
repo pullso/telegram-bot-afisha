@@ -1,4 +1,4 @@
-import {Telegraf, session, Markup, Scenes} from "telegraf";
+import {Markup, Scenes, session, Telegraf} from "telegraf";
 import sessionMiddleware from './middlewares/session.js'
 import {settingsStage} from "./middlewares/settings/settingsStage.js";
 import {eventStage} from "./middlewares/event/eventStage.js";
@@ -18,12 +18,12 @@ export const bot = new Telegraf(process.env.NODE_ENV === 'production' ? BOT_TOKE
 
 export const menuKeyboard = Markup
   .inlineKeyboard([
-    Markup.button.callback('🔍 Поиск мероприятий', 'events'),
-    Markup.button.callback('⚙ ️Настройки', 'settings')
-
-    // ['🔍 Поиск мероприятий', '😎 Подписка'],
-    // ['⚙ ️Настройки', '📞 Обратная связь'],
-    // ['👥 Поделиться ботом']
+    [Markup.button.callback('🔍 Поиск мероприятий', 'events'),
+      Markup.button.callback('⚙ ️Настройки', 'settings')],
+    [Markup.button.url('📢 Поделиться ботом', 'https://t.me/share/url?url=https%3A//t.me/afishatimepadbot?start=share')],
+// ['🔍 Поиск мероприятий', '😎 Подписка'],
+// ['⚙ ️Настройки', '📞 Обратная связь'],
+// ['👥 Поделиться ботом']
   ])
   .oneTime()
   .resize()
