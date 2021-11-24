@@ -8,8 +8,10 @@ class EventsController {
     const {message_id} = await ctx.editMessageText(
       'Выберите дату поиска:',
       Markup.inlineKeyboard([
-        [Markup.button.callback('Сегодня', 'date Сегодня'),
-          Markup.button.callback('Завтра', 'date Завтра')],
+        [Markup.button.callback('▫️Сегодня (все)', 'date Сегодня'),
+          Markup.button.callback('▫️Завтра (все)', 'date Завтра')],
+        [Markup.button.callback('▪️Сегодня (вечер)', 'date Сегодня (17:00 - 00:00)'),
+          Markup.button.callback('▪️Завтра (вечер)', 'date Завтра (17:00 - 00:00)')],
         [Markup.button.callback('Выходные', 'date Выходные')],
         [Markup.button.callback('📋 Меню', 'menu')]
       ]).resize())

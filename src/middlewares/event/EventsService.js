@@ -98,13 +98,22 @@ class EventsService {
 
 function getFormattedDates(text) {
   const settings = {}
+  // TODO remove console
+  console.log(text, `: text`)
   if (text === 'Завтра') {
     settings.starts_at_min = moment().add(1, 'days').startOf('day').format()
     settings.starts_at_max = moment().endOf('day').add(1, 'days').format()
   } else if (text === 'Выходные') {
     settings.starts_at_min = moment().day(6).startOf('day').format()
     settings.starts_at_max = moment().day(7).endOf('day').format()
+  } else if (text==='Сегодня (17:00 - 00:00)') {
+    settings.starts_at_min = moment().set('hour', 16).set('minute', 55).format()
+    settings.starts_at_max = moment().endOf('day').format()
+  } else if (text==='Завтра (17:00 - 00:00)') {
+    settings.starts_at_min = moment().set('hour', 16).set('minute', 55).add(1, 'days').format()
+    settings.starts_at_max = moment().endOf('day').add(1, 'days').format()
   } else {
+    settings.starts_at_min = moment().format()
     settings.starts_at_max = moment().endOf('day').format()
   }
   return settings
