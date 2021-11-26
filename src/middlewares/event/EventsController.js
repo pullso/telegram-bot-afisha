@@ -13,6 +13,8 @@ class EventsController {
           Markup.button.callback('▫️Завтра', 'date Завтра')],
         [Markup.button.callback('▪️Сегодня (вечер)', 'date Сегодня (17:00 - 00:00)', moment().hour() >= 17),
           Markup.button.callback('▪️Завтра (вечер)', 'date Завтра (17:00 - 00:00)')],
+        [Markup.button.callback('▫Суббота', 'date Суббота'),
+          Markup.button.callback('▫Воскресенье', 'date Воскресенье')],
         [Markup.button.callback('▫️Выходные', 'date Выходные')],
         [Markup.button.callback('📋 Меню', 'menu')]
       ]).resize())
