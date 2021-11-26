@@ -1,5 +1,5 @@
 import {Markup} from "telegraf";
-import {menuKeyboard} from "../../bot.js";
+import {calendar, menuKeyboard} from "../../bot.js";
 import EventsService from "./EventsService.js";
 import UserService from "../../services/UserService.js";
 import moment from "../../plugins/moment.js";
@@ -13,11 +13,13 @@ class EventsController {
           Markup.button.callback('▫️Завтра', 'date Завтра')],
         [Markup.button.callback('▪️Сегодня (вечер)', 'date Сегодня (17:00 - 00:00)', moment().hour() >= 17),
           Markup.button.callback('▪️Завтра (вечер)', 'date Завтра (17:00 - 00:00)')],
-        [Markup.button.callback('▫Суббота', 'date Суббота'),
-          Markup.button.callback('▫Воскресенье', 'date Воскресенье')],
-        [Markup.button.callback('▫️Выходные', 'date Выходные')],
-        [Markup.button.callback('📋 Меню', 'menu')]
-      ]).resize())
+        [Markup.button.callback('▫сб', 'date Суббота'),
+          Markup.button.callback('▫вс', 'date Воскресенье'),
+          // Markup.button.callback('▫️Выходные', 'date Выходные')
+        ],
+        [Markup.button.callback('▫Календарь', 'calendar'),
+          Markup.button.callback('📋 Меню', 'menu')]]).resize())
+
 
     ctx.session[ctx.from.id].page.pageIndex = 1;
     ctx.session[ctx.from.id].deleteMessageIds.push({message_id, chat_id: ctx.chat.id})
@@ -51,6 +53,8 @@ class EventsController {
   async getDate(ctx) {
     const session = ctx.session[ctx.from.id]
     session.settings.date = ctx.match[1]
+    // TODO remove console
+    console.log(session, `: session`)
     const user = await UserService.find(ctx.from.id)
 
     const opt = {
@@ -63,10 +67,10 @@ class EventsController {
       ? 'Бесплатно'
       : `от ${price_min} до ${price_max}`
 
-    await ctx.reply(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
+    await ctx.editMessageText(`🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
     await ctx.telegram.sendMessage(process.env.ADMIN_CHAT_ID, `${ctx.from.id}\n🔍 Настройки поиска:\n📍 ${opt.cities}\n💸 ${priceText} \n⏱ ${opt.date}`)
 
-    return ctx.wizard.steps[ctx.wizard.cursor + 1](ctx);
+    return ctx.wizard.steps[ctx.wizard.cursor + 1](ctx)
   }
 }
 

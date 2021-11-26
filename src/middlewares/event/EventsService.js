@@ -112,10 +112,15 @@ function getFormattedDates(text) {
   } else if (text === 'Завтра (17:00 - 00:00)') {
     settings.starts_at_min = moment().set('hour', 16).set('minute', 55).add(1, 'days').format()
     settings.starts_at_max = moment().endOf('day').add(1, 'days').format()
-  } else {
+  } else if(text === 'Сегодня') {
     settings.starts_at_min = moment().format()
     settings.starts_at_max = moment().endOf('day').format()
+  } else {
+    settings.starts_at_min = moment(text).format()
+    settings.starts_at_max = moment(text).endOf('day').format()
   }
+  // TODO remove console
+  console.log(settings, `: settings`)
   return settings
 }
 
