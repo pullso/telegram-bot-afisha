@@ -6,10 +6,13 @@ const {WizardScene} = Scenes
 export const eventStage = new WizardScene(
   'eventStage',
   Telegraf.action(/calendar-telegram-date-(.+)/g, EventsController.getDate),
-
   EventsController.sendEvents,
-  Telegraf.action('moreEvents', EventsController.moreEvents)
 )
+
+eventStage.action('moreEvents',async (ctx)=> {
+  await ctx.editMessageReplyMarkup(ctx.message?.chat_id)
+  await EventsController.moreEvents(ctx)
+})
 
 eventStage.action(/date (.+)/g, EventsController.getDate)
 
@@ -45,6 +48,7 @@ eventStage.action(/calendar-telegram-ignore-[\d\w-]+/g, context => context.answe
 
 eventStage.enter(EventsController.enter)
 eventStage.action('menu', async ctx => {
+  await ctx.editMessageReplyMarkup(undefined)
   await ctx.reply('📋 Меню', menuKeyboard)
   await ctx.scene.leave()
 })

@@ -53,8 +53,7 @@ class EventsController {
   async getDate(ctx) {
     const session = ctx.session[ctx.from.id]
     session.settings.date = ctx.match[1]
-    // TODO remove console
-    console.log(session, `: session`)
+
     const user = await UserService.find(ctx.from.id)
 
     const opt = {
@@ -85,7 +84,6 @@ async function sendEventResponse(ctx, {response = null, isLastPage = false}) {
     Markup.button.callback('Ещё', 'moreEvents', isLastPage),
     Markup.button.callback('📋 Меню', 'menu')
   ])
-
   await ctx.replyWithHTML(
     response.join('\n\n'),
     {

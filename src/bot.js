@@ -57,10 +57,11 @@ export const calendar = new Calendar(bot, {
 
 bot.action('settings', ctx => ctx.scene.enter('settings'))
 bot.action('events', ctx => ctx.scene.enter('eventStage'))
+bot.help((ctx) => ctx.reply('Бот создан для помощи в поиске ивентов.\nЕсли кнопки не работают - попробуйте написать боту любой текст. Если вы нашли какие-то проблемы или ошибки - сообщите, пожалуйста, мне.\nНапишите @pullso.', menuKeyboard)
+)
 
-bot.on('text', async (ctx) => {
-  return await ctx.reply('📋 Меню', menuKeyboard)
-})
+bot.on('text',(ctx) => ctx.reply('📋 Меню', menuKeyboard))
+
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))

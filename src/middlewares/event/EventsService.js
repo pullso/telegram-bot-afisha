@@ -119,8 +119,6 @@ function getFormattedDates(text) {
     settings.starts_at_min = moment(text).format()
     settings.starts_at_max = moment(text).endOf('day').format()
   }
-  // TODO remove console
-  console.log(settings, `: settings`)
   return settings
 }
 

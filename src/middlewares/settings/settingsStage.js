@@ -20,6 +20,7 @@ export const settingsStage = new WizardScene(
 settingsStage.enter(SettingsController.enter)
 
 settingsStage.action('menu', async ctx => {
+  await ctx.editMessageReplyMarkup(undefined)
   await ctx.editMessageText('📋 Меню', menuKeyboard)
   await ctx.scene.leave()
 })
